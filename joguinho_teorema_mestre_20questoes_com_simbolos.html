@@ -216,34 +216,35 @@ function normalize(str) {
 
 function check() {
   const q = questions[current];
-  const a = document.getElementById('a').value;
-  const b = document.getElementById('b').value;
-  const f = document.getElementById('f').value;
-  const logba = document.getElementById('logba').value;
-  const comp = document.getElementById('comp').value;
-  const caso = document.getElementById('caso').value;
-  const result = document.getElementById('result').value;
+  const campos = ["a", "b", "f", "logba", "comp", "caso", "result"];
   const expDiv = document.getElementById('explicacao');
   const nextBtn = document.getElementById('nextBtn');
 
-  if (
-    normalize(a) === normalize(q.a) &&
-    normalize(b) === normalize(q.b) &&
-    normalize(f) === normalize(q.f) &&
-    normalize(logba) === normalize(q.logba) &&
-    normalize(comp) === normalize(q.comp) &&
-    normalize(caso) === normalize(q.caso) &&
-    normalize(result) === normalize(q.result)
-  ) {
+  let tudoCerto = true;
+  expDiv.classList.remove("hidden");
+  expDiv.innerHTML = "";
+
+  campos.forEach(campo => {
+    const input = document.getElementById(campo);
+    const valorDigitado = normalize(input.value);
+    const valorCorreto = normalize(q[campo]);
+
+    if (valorDigitado !== valorCorreto) {
+      input.style.border = "2px solid red";
+      tudoCerto = false;
+      expDiv.innerHTML += `❌ O campo <b>${campo}</b> está incorreto. Esperado algo como: <b>${q[campo]}</b><br>`;
+    } else {
+      input.style.border = "2px solid green";
+    }
+  });
+
+  if (tudoCerto) {
     score++;
-    expDiv.classList.remove("hidden");
     expDiv.innerHTML = "✅ Resposta correta!<br><br>" + q.explicacao;
     nextBtn.classList.remove("hidden");
-  } else {
-    expDiv.classList.remove("hidden");
-    expDiv.innerHTML = "❌ Resposta incorreta. Reveja os parâmetros e tente novamente.";
   }
 }
+
 
 function next() {
   current++;
