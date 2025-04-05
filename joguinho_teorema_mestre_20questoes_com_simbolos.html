@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo Teorema Mestre – Explicativo</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; max-width: 900px; margin: auto; background: #f0f0f0; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; margin-bottom: 30px; }
+    label { display: block; margin-top: 10px; }
+    input[type="text"] { width: 100%; padding: 8px; font-size: 16px; margin-top: 4px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    .explicacao { background: #e6ffe6; border: 1px solid #b2ffb2; padding: 15px; border-radius: 8px; margin-top: 15px; }
+    #score { font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🎓 Jogo Teorema Mestre – 20 Questões</h1>
+  <div id="quiz-container"></div>
+  <div id="score" class="hidden"></div>
+
+<script>
+const questions = [
+  
+  {
+    relation: "T(n) = 4T(n/2) + n",
+    a: "4", b: "2", f: "n",
+    logba: "2", comp: "n < n²",
+    caso: "caso 1", result: "Θ(n²)",
+    explicacao: "Como ε ∈ ℝ⁺, podemos escolher ε = 1. O Caso 1 é verdadeiro para ε = 1, pois f(n) = O(n^{2−ε}) = O(n). Assim, de acordo com o Caso 1, T(n) = Θ(n^{log₂4}) = Θ(n²)."
+  },
+
+  {
+    relation: "T(n) = 2T(n/2) + n",
+    a: "2", b: "2", f: "n",
+    logba: "1", comp: "n = n¹",
+    caso: "caso 2", result: "Θ(n log n)",
+    explicacao: "Como f(n) = Θ(n^{log₂2}), temos um empate. De acordo com o Caso 2, T(n) = Θ(n log n)."
+  },
+
+  {
+    relation: "T(n) = T(n/2) + 1",
+    a: "1", b: "2", f: "1",
+    logba: "0", comp: "1 = n⁰",
+    caso: "caso 2", result: "Θ(log n)",
+    explicacao: "Como f(n) = Θ(n⁰) e log₂(1) = 0, temos um empate. Aplicamos o Caso 2 e T(n) = Θ(log n)."
+  },
+
+  {
+    relation: "T(n) = 8T(n/2) + n³",
+    a: "8", b: "2", f: "n³",
+    logba: "3", comp: "n³ = n³",
+    caso: "caso 2", result: "Θ(n³ log n)",
+    explicacao: "Como f(n) = n³ = n^{log₂8}, temos empate. Caso 2: T(n) = Θ(n³ log n)."
+  },
+
+  {
+    relation: "T(n) = 3T(n/2) + n",
+    a: "3", b: "2", f: "n",
+    logba: "1.58", comp: "n < n^1.58",
+    caso: "caso 1", result: "Θ(n^1.58)",
+    explicacao: "Como f(n) = n = O(n^{1.58−ε}), usamos Caso 1. T(n) = Θ(n^1.58)."
+  },
+
+  {
+    relation: "T(n) = 9T(n/3) + n²",
+    a: "9", b: "3", f: "n²",
+    logba: "2", comp: "n² = n²",
+    caso: "caso 2", result: "Θ(n² log n)",
+    explicacao: "f(n) = n² = n^{log₃9}. Caso 2 ⇒ T(n) = Θ(n² log n)."
+  },
+
+  {
+    relation: "T(n) = 2T(n/2) + n²",
+    a: "2", b: "2", f: "n²",
+    logba: "1", comp: "n² > n",
+    caso: "caso 3", result: "Θ(n²)",
+    explicacao: "f(n) = Ω(n^{1+ε}). Satisfaz regularidade ⇒ Caso 3: T(n) = Θ(n²)."
+  },
+
+  {
+    relation: "T(n) = 7T(n/2) + n³",
+    a: "7", b: "2", f: "n³",
+    logba: "2.8", comp: "n³ > n^2.8",
+    caso: "caso 3", result: "Θ(n³)",
+    explicacao: "f(n) = Ω(n^{2.8+ε}). Caso 3 ⇒ T(n) = Θ(n³)."
+  },
+
+  {
+    relation: "T(n) = 3T(n/4) + n",
+    a: "3", b: "4", f: "n",
+    logba: "0.79", comp: "n > n^0.79",
+    caso: "caso 3", result: "Θ(n)",
+    explicacao: "f(n) domina ⇒ Caso 3 ⇒ T(n) = Θ(n)."
+  },
+
+  {
+    relation: "T(n) = 5T(n/2) + n",
+    a: "5", b: "2", f: "n",
+    logba: "2.32", comp: "n < n^2.32",
+    caso: "caso 1", result: "Θ(n^2.32)",
+    explicacao: "Caso 1 pois f(n) = O(n^{log₂5−ε}) ⇒ T(n) = Θ(n^2.32)."
+  },
+
+  {
+    relation: "T(n) = 4T(n/4) + n",
+    a: "4", b: "4", f: "n",
+    logba: "1", comp: "n = n",
+    caso: "caso 2", result: "Θ(n log n)",
+    explicacao: "Empate entre f(n) e n^{log₄4} ⇒ Caso 2."
+  },
+
+  {
+    relation: "T(n) = 2T(n/2) + √n",
+    a: "2", b: "2", f: "√n",
+    logba: "1", comp: "√n < n",
+    caso: "caso 1", result: "Θ(n)",
+    explicacao: "f(n) = O(n^{1−ε}) ⇒ Caso 1 ⇒ T(n) = Θ(n)."
+  },
+
+  {
+    relation: "T(n) = 1T(n/2) + n",
+    a: "1", b: "2", f: "n",
+    logba: "0", comp: "n > 1",
+    caso: "caso 3", result: "Θ(n)",
+    explicacao: "f(n) = Ω(n^{0+ε}) ⇒ Caso 3."
+  },
+
+  {
+    relation: "T(n) = 2T(n/2) + n log n",
+    a: "2", b: "2", f: "n log n",
+    logba: "1", comp: "n log n > n",
+    caso: "caso 3", result: "Θ(n log n)",
+    explicacao: "f(n) domina ⇒ Caso 3."
+  },
+
+  {
+    relation: "T(n) = 3T(n/3) + n",
+    a: "3", b: "3", f: "n",
+    logba: "1", comp: "n = n",
+    caso: "caso 2", result: "Θ(n log n)",
+    explicacao: "Empate entre f(n) e n^{log₃3} ⇒ Caso 2."
+  },
+
+  {
+    relation: "T(n) = 2T(n/2) + log n",
+    a: "2", b: "2", f: "log n",
+    logba: "1", comp: "log n < n",
+    caso: "caso 1", result: "Θ(n)",
+    explicacao: "f(n) = O(n^{1−ε}) ⇒ Caso 1."
+  },
+
+  {
+    relation: "T(n) = 4T(n/2) + n²",
+    a: "4", b: "2", f: "n²",
+    logba: "2", comp: "n² = n²",
+    caso: "caso 2", result: "Θ(n² log n)",
+    explicacao: "f(n) = n² = n^{log₂4} ⇒ Caso 2."
+  },
+
+  {
+    relation: "T(n) = 2T(n/4) + n",
+    a: "2", b: "4", f: "n",
+    logba: "0.5", comp: "n > n^0.5",
+    caso: "caso 3", result: "Θ(n)",
+    explicacao: "f(n) = Ω(n^{0.5+ε}) ⇒ Caso 3."
+  },
+
+  {
+    relation: "T(n) = 6T(n/3) + n",
+    a: "6", b: "3", f: "n",
+    logba: "1.63", comp: "n < n^1.63",
+    caso: "caso 1", result: "Θ(n^1.63)",
+    explicacao: "f(n) = O(n^{log₃6−ε}) ⇒ Caso 1."
+  }
+];
+
+let current = 0;
+let score = 0;
+
+function renderQuestion() {
+  if (current >= questions.length) {
+    document.getElementById('quiz-container').innerHTML = '';
+    document.getElementById('score').classList.remove('hidden');
+    document.getElementById('score').innerText = `🎉 Fim do jogo! Sua pontuação: ${score} de ${questions.length}`;
+    return;
+  }
+
+  const q = questions[current];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="card">
+      <h2>Questão ${current + 1}</h2>
+      <p><strong>Relação:</strong> ${q.relation}</p>
+<div style='margin-top: 15px; background: #f9f9f9; padding: 10px; border: 1px solid #ccc; border-radius: 8px;'>
+  <strong>📋 Copie e cole os símbolos se precisar:</strong><br>
+  n² &nbsp;&nbsp;&nbsp; √n &nbsp;&nbsp;&nbsp; ε &nbsp;&nbsp;&nbsp; Θ &nbsp;&nbsp;&nbsp; Ω &nbsp;&nbsp;&nbsp; ∈ &nbsp;&nbsp;&nbsp; log₂
+</div>
+
+      <label>a: <input type="text" id="a"></label>
+      <label>b: <input type="text" id="b"></label>
+      <label>f(n): <input type="text" id="f"></label>
+      <label>log_b(a): <input type="text" id="logba"></label>
+      <label>Comparação: <input type="text" id="comp"></label>
+      <label>Caso aplicado: <input type="text" id="caso"></label>
+      <label>Resultado: <input type="text" id="result"></label>
+      <button onclick="check()">Verificar</button>
+      <div id="explicacao" class="explicacao hidden"></div>
+      <button id="nextBtn" class="hidden" onclick="next()">Próxima</button>
+    </div>
+  `;
+}
+
+function normalize(str) {
+  return str.toLowerCase().replaceAll(" ", "").replaceAll("^", "").replaceAll("·", "").replaceAll("log", "log");
+}
+
+function check() {
+  const q = questions[current];
+  const a = document.getElementById('a').value;
+  const b = document.getElementById('b').value;
+  const f = document.getElementById('f').value;
+  const logba = document.getElementById('logba').value;
+  const comp = document.getElementById('comp').value;
+  const caso = document.getElementById('caso').value;
+  const result = document.getElementById('result').value;
+  const expDiv = document.getElementById('explicacao');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (
+    normalize(a) === normalize(q.a) &&
+    normalize(b) === normalize(q.b) &&
+    normalize(f) === normalize(q.f) &&
+    normalize(logba) === normalize(q.logba) &&
+    normalize(comp) === normalize(q.comp) &&
+    normalize(caso) === normalize(q.caso) &&
+    normalize(result) === normalize(q.result)
+  ) {
+    score++;
+    expDiv.classList.remove("hidden");
+    expDiv.innerHTML = "✅ Resposta correta!<br><br>" + q.explicacao;
+    nextBtn.classList.remove("hidden");
+  } else {
+    expDiv.classList.remove("hidden");
+    expDiv.innerHTML = "❌ Resposta incorreta. Reveja os parâmetros e tente novamente.";
+  }
+}
+
+function next() {
+  current++;
+  renderQuestion();
+}
+
+window.onload = renderQuestion;
+</script>
+</body>
+</html>
